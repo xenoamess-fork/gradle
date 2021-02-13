@@ -313,7 +313,7 @@ class FileCollectionLifecycleIntegrationTest extends AbstractIntegrationSpec imp
         output.count("value = [${file('some-file')}]") == 2
     }
 
-    def "task @InputFiles file collection property is implicitly finalized and changes ignored when task starts execution"() {
+    def "task @InputFiles file collection property is implicitly finalized and changes fail the build when task starts execution"() {
         taskTypeWithInputFileCollection()
         buildFile """
             task merge(type: InputFilesTask) {
@@ -327,16 +327,13 @@ class FileCollectionLifecycleIntegrationTest extends AbstractIntegrationSpec imp
         file("in.txt").text = "in"
 
         when:
-        executer.expectDocumentedDeprecationWarning("Changing the value for a FileCollection with a final value has been deprecated. " +
-            "This will fail with an error in Gradle 7.0. " +
-            "See https://docs.gradle.org/current/userguide/lazy_configuration.html#unmodifiable_property for more details.")
-        run("merge")
+        fails("merge")
 
         then:
-        file("out.txt").text == "in"
+        failure.assertHasCause("The value for this file collection is final and cannot be changed.")
     }
 
-    def "task ad hoc input file collection property is implicitly finalized and changes ignored when task starts execution"() {
+    def "task ad hoc input file collection property is implicitly finalized and changes fail the build when task starts execution"() {
         buildFile """
             def files = project.files()
             def outFile = file("out.txt")
@@ -353,12 +350,9 @@ class FileCollectionLifecycleIntegrationTest extends AbstractIntegrationSpec imp
         file("in.txt").text = "in"
 
         when:
-        executer.expectDocumentedDeprecationWarning("Changing the value for a FileCollection with a final value has been deprecated. " +
-            "This will fail with an error in Gradle 7.0. " +
-            "See https://docs.gradle.org/current/userguide/lazy_configuration.html#unmodifiable_property for more details.")
-        run("show")
+        fails("show")
 
         then:
-        file("out.txt").text == "in.txt"
+        failure.assertHasCause("The value for this file collection is final and cannot be changed.")
     }
 }

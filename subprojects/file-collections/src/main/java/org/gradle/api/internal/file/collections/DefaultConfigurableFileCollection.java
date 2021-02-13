@@ -208,16 +208,10 @@ public class DefaultConfigurableFileCollection extends CompositeFileCollection i
     }
 
     private boolean assertMutable() {
-        if (state == State.Final && disallowChanges) {
+        if (state == State.Final) {
             throw new IllegalStateException("The value for " + displayNameForThisCollection() + " is final and cannot be changed.");
         } else if (disallowChanges) {
             throw new IllegalStateException("The value for " + displayNameForThisCollection() + " cannot be changed.");
-        } else if (state == State.Final) {
-            DeprecationLogger.deprecateAction("Changing the value for a FileCollection with a final value")
-                .willBecomeAnErrorInGradle7()
-                .withUserManual("lazy_configuration", "unmodifiable_property")
-                .nagUser();
-            return false;
         } else {
             return true;
         }

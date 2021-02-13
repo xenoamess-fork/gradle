@@ -138,6 +138,26 @@ If `afterEvaluate` is declared in a plugin then report the issue to the plugin m
 
 Exceptions to this are invoking Gradle with the `init` task or using diagnostic command line flags, such as `--version`.
 
+==== Changing the value for a `FileCollection` with a final value is now an error
+
+Gradle implicitly marks inputs to a task as final before executing the task's actions.
+Gradle 6.x warns about trying to change the value of a file collection that was used as an input in a task's action.
+This can cause unexpected behavior, such as tasks running in the wrong order, or incorrect up-to-date checking.
+
+Gradle now fails if a task attempts to modify a file collection used as an input during task execution.
+
+Here is an example of a task modifying its inputs during task execution:
+```
+task merge(type: SomeTask) {
+    inputFiles.from("in.txt")
+    doFirst {
+        // This adds "other.txt" as an input to this task
+        // This is now an error
+        inputFiles.from("other.txt")
+    }
+}
+```
+
 ==== Removal of `ProjectLayout#configurableFiles`
 
 Please use `ObjectFactory#fileCollection()` instead.
