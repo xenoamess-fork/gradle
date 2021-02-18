@@ -62,6 +62,15 @@ File system watching and configuration caching is enabled for the comparison.
 
 You can find the performance test project [here](https://github.com/gradle/santa-tracker-performance).
 
+### Native support for Apple silicon
+
+With previous Gradle versions there were two options to run Gradle builds on the new Macs equipped with the M1 chip:
+
+* run with a native ARM JDK, but lose support for the rich console and file system watching, or
+* use an Intel JDK with Rosetta, but run at about half the performance.
+
+With Gradle 7.0 these limitations are gone, and Gradle now fully supports Apple silicon using a native ARM JDK.
+
 ## Ignore empty `buildSrc` project
 
 In earlier Gradle versions, the mere presence of a `buildSrc` directory was enough to trigger Gradle to execute all `buildSrc` tasks and to add the resulting `buildSrc.jar` to the buildscript class path.
